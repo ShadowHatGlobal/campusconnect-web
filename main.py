@@ -381,3 +381,4 @@ status_badge.innerText = "Welcome Fellow Student"
 status_badge.classList.remove("loading")
 status_badge.classList.add("ready")
 render_feed()
+
