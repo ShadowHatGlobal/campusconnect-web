@@ -377,7 +377,7 @@ def reset_demo(event):
 
 # Initial UI render once PyScript finishes loading
 status_badge = document.querySelector("#py-status")
-status_badge.innerText = "Python 3 Ready"
+status_badge.innerText = "Welcome Fellow Student"
 status_badge.classList.remove("loading")
 status_badge.classList.add("ready")
 render_feed()
