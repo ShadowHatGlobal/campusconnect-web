@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CampusConnect — University Student Community Hub</title>
+
+  <!-- Modern Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="./style.css" />
+
+  <!-- PyScript 2026.7.3 (Runs Python in the browser on GitHub Pages) -->
+  <link rel="stylesheet" href="https://pyscript.net/releases/2026.7.3/core.css" />
+  <script type="module" src="https://pyscript.net/releases/2026.7.3/core.js"></script>
+</head>
+<body>
+  <!-- Top Navigation -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <div class="brand">
+        <div class="logo-box">CC</div>
+        <div>
+          <h1>CampusConnect</h1>
+          <p class="subtitle">University Student Community Hub</p>
+        </div>
+      </div>
+
+      <div class="nav-right">
+        <span id="py-status" class="status-badge loading">Loading Python...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero & Live Stats -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div>
+        <h2>Connect, Collaborate &amp; Stay Updated on Campus</h2>
+        <p class="hero-desc">
+          Discover club events, join course study groups, and share peer resources — powered by Python in your browser.
+        </p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-num" id="stat-events">0</span>
+          <span class="stat-label">Events</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num" id="stat-groups">0</span>
+          <span class="stat-label">Study Groups</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num" id="stat-posts">0</span>
+          <span class="stat-label">Q&amp;A / Resources</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Controls: Tabs + Live Search -->
+  <main class="container main-content">
+    <div class="toolbar">
+      <nav id="tab-nav" class="tabs">
+        <button type="button" class="tab-btn active" data-tab="events">Events &amp; Notices</button>
+        <button type="button" class="tab-btn" data-tab="groups">Study Groups</button>
+        <button type="button" class="tab-btn" data-tab="resources">Q&amp;A &amp; Resources</button>
+      </nav>
+
+      <div class="search-wrap">
+        <input
+          type="search"
+          id="search-input"
+          placeholder="Search events, course codes (CS101), topics..."
+          autocomplete="off"
+        />
+      </div>
+    </div>
+
+    <!-- Toast Notification Banner -->
+    <div id="toast" class="toast hidden">
+      <span id="toast-msg"></span>
+      <button type="button" id="toast-close" class="toast-close">&times;</button>
+    </div>
+
+    <!-- Two-Column Workspace -->
+    <div class="workspace">
+      <!-- Left: Cards Feed -->
+      <section class="feed-section">
+        <h3 id="feed-title" class="section-heading">Upcoming Campus Events &amp; Notices</h3>
+        <div id="cards-container" class="cards-grid">
+          <div class="empty-state">Initializing Python community feed...</div>
+        </div>
+      </section>
+
+      <!-- Right: Dynamic Form Sidebar -->
+      <aside class="form-sidebar">
+        <!-- Event Form -->
+        <div id="panel-events" class="form-card">
+          <h3>Post an Event / Notice</h3>
+          <p class="form-hint">Share upcoming hackathons, club meets, or notices.</p>
+          <div class="field">
+            <label for="evt-title">Event Title</label>
+            <input type="text" id="evt-title" placeholder="e.g., AI & Robotics Expo" />
+          </div>
+          <div class="field">
+            <label for="evt-org">Organizer / Club</label>
+            <input type="text" id="evt-org" placeholder="e.g., IEEE Student Branch" />
+          </div>
+          <div class="field">
+            <label for="evt-date">Date</label>
+            <input type="date" id="evt-date" />
+          </div>
+          <div class="field">
+            <label for="evt-venue">Venue</label>
+            <input type="text" id="evt-venue" placeholder="e.g., Main Auditorium" />
+          </div>
+          <button type="button" id="btn-add-event" class="btn-primary full-width">Publish Event</button>
+        </div>
+
+        <!-- Study Group Form -->
+        <div id="panel-groups" class="form-card hidden">
+          <h3>Create a Study Group</h3>
+          <p class="form-hint">Team up with classmates for labs and exam prep.</p>
+          <div class="field">
+            <label for="grp-course">Course Code</label>
+            <input type="text" id="grp-course" placeholder="e.g., CS101" />
+          </div>
+          <div class="field">
+            <label for="grp-topic">Study Topic</label>
+            <input type="text" id="grp-topic" placeholder="e.g., Python & Data Structures" />
+          </div>
+          <div class="field">
+            <label for="grp-schedule">Schedule &amp; Location</label>
+            <input type="text" id="grp-schedule" placeholder="e.g., Fri 4 PM, Library Room 3" />
+          </div>
+          <div class="field">
+            <label for="grp-creator">Your Name</label>
+            <input type="text" id="grp-creator" placeholder="e.g., Aarav" />
+          </div>
+          <button type="button" id="btn-add-group" class="btn-primary full-width">Create Group</button>
+        </div>
+
+        <!-- Resource / Q&A Form -->
+        <div id="panel-resources" class="form-card hidden">
+          <h3>Share Resource / Ask Q&amp;A</h3>
+          <p class="form-hint">Post notes, helpful links, or ask your peers.</p>
+          <div class="field">
+            <label for="res-author">Your Name</label>
+            <input type="text" id="res-author" placeholder="e.g., Ananya" />
+          </div>
+          <div class="field">
+            <label for="res-title">Title / Question</label>
+            <input type="text" id="res-title" placeholder="e.g., DBMS Normalization Notes" />
+          </div>
+          <div class="field">
+            <label for="res-details">Details / Notes</label>
+            <textarea id="res-details" rows="3" placeholder="Share tips, summary, or question details..."></textarea>
+          </div>
+          <button type="button" id="btn-add-resource" class="btn-primary full-width">Publish Post</button>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Modal for Joining a Study Group or Replying to a Post -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal-box">
+      <h3 id="modal-title">Action</h3>
+      <div class="field">
+        <label for="modal-name">Your Name</label>
+        <input type="text" id="modal-name" placeholder="Enter your full name" />
+      </div>
+      <div id="modal-reply-group" class="field hidden">
+        <label for="modal-reply-text">Your Reply</label>
+        <textarea id="modal-reply-text" rows="3" placeholder="Write your helpful reply..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="modal-cancel" class="btn-secondary">Cancel</button>
+        <button type="button" id="modal-submit" class="btn-primary">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p>CampusConnect &bull; Built with Python + PyScript &amp; Hosted on GitHub Pages</p>
+      <button type="button" id="btn-reset" class="btn-link">Reset Demo Data</button>
+    </div>
+  </footer>
+
+  <!-- Load our Python logic -->
+  <script type="py" src="./main.py"></script>
+</body>
+</html>
